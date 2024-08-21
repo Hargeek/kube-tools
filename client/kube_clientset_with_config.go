@@ -10,15 +10,15 @@ import (
 	"k8s.io/klog"
 )
 
-var K8sCS k8sCS
+var KubeClientSetWithConfig kubeClientSetWithConfig
 
-type k8sCS struct {
+type kubeClientSetWithConfig struct {
 	ClientMap   map[string]*kubernetes.Clientset // multi-cluster client
 	KubeConfMap map[string]string                // cluster config
 }
 
 // GetClient get k8s client by cluster name
-func (k *k8sCS) GetClient(cluster string) (*kubernetes.Clientset, error) {
+func (k *kubeClientSetWithConfig) GetClient(cluster string) (*kubernetes.Clientset, error) {
 	client, ok := k.ClientMap[cluster]
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("cluster:%s not exist, can't get client\n", cluster))
@@ -27,7 +27,7 @@ func (k *k8sCS) GetClient(cluster string) (*kubernetes.Clientset, error) {
 }
 
 // Init k8s client
-func (k *k8sCS) Init() {
+func (k *kubeClientSetWithConfig) Init() {
 	mp := map[string]string{}
 	k.ClientMap = map[string]*kubernetes.Clientset{}
 	if err := json.Unmarshal([]byte(config.KubeConfigRelativePath), &mp); err != nil {
